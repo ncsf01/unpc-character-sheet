@@ -148,7 +148,10 @@ function updateSheet() {
   let status = "Healthy";
   let statusClass = "status-healthy";
 
-  if (current >= maxStrikes) {
+  if (maxStrikes === 0) {
+    status = "—";
+    statusClass = "";
+  } else if (current >= maxStrikes) {
     status = "Incapacitated!";
     statusClass = "status-incapacitated";
   } else if (current >= Math.ceil(maxStrikes / 2)) {
@@ -481,7 +484,15 @@ function saveCharacter() {
 
   let saved = JSON.parse(localStorage.getItem("savedCharacters")) || [];
   saved.push(charData);
-  localStorage.setItem("savedCharacters", JSON.stringify(saved));
+
+  try {
+    localStorage.setItem("savedCharacters", JSON.stringify(saved));
+  } catch (err) {
+    alert(
+      "Could not save: browser storage is full. Try a smaller portrait image."
+    );
+    return;
+  }
 
   alert("Character saved locally!");
   showSavedCharacters();
@@ -555,7 +566,7 @@ function applyCharacterUpload() {
 function resetCharacter() {
   document.getElementById("charName").value = "";
   document.getElementById("charNotes").value = "";
-  document.getElementById("portraitImg").src = "";
+  document.getElementById("portraitImg").src = "stickfigure.jpg";
   document.getElementById("currentStrikes").textContent = "0";
 
   const allIds = [...broadIds, ...combatIds];
